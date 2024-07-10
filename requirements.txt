@@ -4,4 +4,4 @@ langchain_core
 langchain_community
 langserve
 fastapi
-faiss
+faiss-cpu
