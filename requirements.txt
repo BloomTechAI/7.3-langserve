@@ -5,3 +5,4 @@ langchain_community
 langserve
 fastapi
 faiss-cpu
+sse_starlette
