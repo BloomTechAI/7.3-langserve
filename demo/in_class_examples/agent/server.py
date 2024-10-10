@@ -23,7 +23,8 @@ from fastapi import FastAPI
 from langchain.agents import AgentExecutor
 from langchain.agents.format_scratchpad import format_to_openai_functions
 from langchain.agents.output_parsers import OpenAIFunctionsAgentOutputParser
-from langchain.pydantic_v1 import BaseModel
+# from langchain.pydantic_v1 import BaseModel
+from pydantic import BaseModel
 from langchain_community.vectorstores import FAISS
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.tools import tool
@@ -31,6 +32,16 @@ from langchain_core.utils.function_calling import format_tool_to_openai_function
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
 from langserve import add_routes
+
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
+os.environ["LANGCHAIN_API_KEY"] = os.getenv("LANGCHAIN_API_KEY")
+os.environ["LANGCHAIN_TRACING_V2"] = os.getenv("LANGCHAIN_TRACING_V2")
+os.environ["LANGCHAIN_PROJECT"] = os.getenv("LANGCHAIN_PROJECT")
 
 vectorstore = FAISS.from_texts(
     ["cats like fish", "dogs like sticks"], embedding=OpenAIEmbeddings()
@@ -64,9 +75,10 @@ prompt = ChatPromptTemplate.from_messages(
 # but not when using the stream endpoint since the stream implementation for agent
 # streams action observation pairs not individual tokens.
 # See the client notebook that shows how to use the stream events endpoint.
-llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0, streaming=True)
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0, streaming=True)
 
-llm_with_tools = llm.bind(functions=[format_tool_to_openai_function(t) for t in tools])
+# llm_with_tools = llm.bind(functions=[format_tool_to_openai_function(t) for t in tools])
+llm_with_tools = llm.bind(functions=[format_to_openai_functions(t) for t in tools])
 
 agent = (
     {
@@ -114,4 +126,4 @@ add_routes(
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="localhost", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -6,3 +6,4 @@ langserve
 fastapi
 faiss-cpu
 sse_starlette
+python-dotenv

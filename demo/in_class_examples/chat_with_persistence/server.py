@@ -20,7 +20,17 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables.history import RunnableWithMessageHistory
 
 from langserve import add_routes
-from langserve.pydantic_v1 import BaseModel, Field
+# from langserve.pydantic_v1 import BaseModel, Field
+from pydantic import BaseModel, Field
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
+os.environ["LANGCHAIN_API_KEY"] = os.getenv("LANGCHAIN_API_KEY")
+os.environ["LANGCHAIN_TRACING_V2"] = os.getenv("LANGCHAIN_TRACING_V2")
+os.environ["LANGCHAIN_PROJECT"] = os.getenv("LANGCHAIN_PROJECT")
 
 
 def _is_valid_identifier(value: str) -> bool:
@@ -76,7 +86,7 @@ prompt = ChatPromptTemplate.from_messages(
     ]
 )
 
-chain = prompt | ChatOpenAI(model="gpt-4o")
+chain = prompt | ChatOpenAI(model="gpt-4o-mini")
 
 
 class InputChat(BaseModel):
@@ -110,4 +120,4 @@ add_routes(
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="localhost", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8002)
