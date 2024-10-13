@@ -1,7 +1,16 @@
-# deployment
+# 7.3 Render Deployment
 
-## Installation
+## Introduction
+Seamlessly deploy and manage LangChain-based agents using Docker, LangServe, and Render.
 
+## NOTES
+The following instructions are for the root directory for setup and local execution of the app we deploy to Render in class. For the demo directory instructions, see the [MAIN README](./README-MAIN.md).
+
+## Deployment Instructions
+To deploy, go to the instructions in the class slides.
+[Slides](https://docs.google.com/presentation/d/1hpNemKpwgmZRQubRjZC3i1JKRXjXmLa9QbUWqNHkQug/edit#slide=id.g2e4f8db8c66_0_0)
+
+## LangChain CLI
 Install the LangChain CLI if you haven't yet
 
 ```bash
@@ -9,7 +18,6 @@ pip install -U langchain-cli
 ```
 
 ## Adding packages
-
 ```bash
 # adding packages from
 # https://github.com/langchain-ai/langchain/tree/master/templates

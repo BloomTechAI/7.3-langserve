@@ -1,10 +1,9 @@
-# Week 7.3: LangServe
+# Week 7.3: LangServe Demos
 
-## Introduction
-Seamlessly deploy and manage LangChain-based agents using LangServe, Docker, LangChain CLI, and Render for efficient cloud operations. [Access a LangServe scaffold made using Docker and ready to deploy on Render here.](https://github.com/bloominstituteoftechnology/ai-deployment-example)
+## NOTE
+The folowing instructions are extras for the `demo` directory. For the main deployment example, see the [DEPLOYMENT README](./README-DEPLOYMENT.md).
 
 ## Slides
-
 [Slides](https://docs.google.com/presentation/d/1hpNemKpwgmZRQubRjZC3i1JKRXjXmLa9QbUWqNHkQug/edit#slide=id.g2e4f8db8c66_0_0)
 
 ## Prerequisites
@@ -25,21 +24,31 @@ Before you begin, ensure you have met the following requirements:
   LANGCHAIN_PROJECT=24a5_7_3
   ```
 ## Docker (recommended)
-1. Start Jupyter to run the `.ipynb` files with a local notebook:
+
+1. In the CLI, `cd` into the `demo` directory. You MUST follow this step before proceeding to access the correct `Dockerfile`/`docker-compose.yml`.
+2. Look at the `docker-compose.yml` and `Dockerfile` file to understand the different services they are managing/running.
+3. Start the Python servers in `in_class_examples` in their respective directories (each command runs its separate server container, and is run from the `demo` directory):
+   ```
+   docker compose up agent
+   docker compose up chat
+   ```
+4. Start Jupyter to run the corresponding `.ipynb` files with a local notebook:
    ```
    docker compose up jupyter
    ```
-3. Run any `.py` file in the root directory in this manner (ones you may create):
+5. Run any `.py` file in the root directory in this manner (`.py` files you may create):
    ```
-   docker compose run --rm main python <the_py_files>
+   docker compose run --rm main python <the_py_file>
    ```
 
 ## Running Different Scripts
 You can use the provided `run.sh` script for easier execution.
 Make sure to make the script executable with `chmod +x run.sh` in the CLI before using:
 ```bash
+./run.sh agent #(starts the agent server)
+./run.sh chat #(starts the chat server)
 ./run.sh jupyter #(starts the jupyter notebook server)
-./run.sh <your_new_py_file> #(runs other .py file)
+./run.sh <your_new_py_file> #(runs other .py files)
 ```
 ## Local Setup (Alternative to Docker)
 If you prefer to run the examples locally:
@@ -57,12 +66,12 @@ If you prefer to run the examples locally:
     pip install -r requirements.txt
     ```
 4. Configure environment variables as described in the Setup section.
-5. Export your `.env` variables to the system (python-dotenv should handle this for you in the main `simple_message_graph.py` and `multi-agent-collaboration.ipynb` files, but this is included for reference):
+5. Export your `.env` variables to the system (LangChain will handle this for you "under the hood" in the `.ipynb` files, but this is included for reference):
    **Linux / Mac / Bash**
       ```bash
       export $(grep -v '^#' .env | xargs)
       ```
-5. Run the notebooks:
+6. Run the notebooks:
     ```
     run the `.ipynb` files in VSCode (it will prompt you to allow the installation of ipykernel: do so) or another IDE that supports notebooks.
     ```
