@@ -23,6 +23,7 @@ from fastapi import FastAPI
 from langchain.agents import AgentExecutor
 from langchain.agents.format_scratchpad import format_to_openai_functions
 from langchain.agents.output_parsers import OpenAIFunctionsAgentOutputParser
+
 # from langchain.pydantic_v1 import BaseModel
 from pydantic import BaseModel
 from langchain_community.vectorstores import FAISS
@@ -77,8 +78,13 @@ prompt = ChatPromptTemplate.from_messages(
 # See the client notebook that shows how to use the stream events endpoint.
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0, streaming=True)
 
-# llm_with_tools = llm.bind(functions=[format_tool_to_openai_function(t) for t in tools])
-llm_with_tools = llm.bind(functions=[format_to_openai_functions(t) for t in tools])
+llm_with_tools = llm.bind(functions=[format_tool_to_openai_function(t) for t in tools])
+# llm_with_tools = llm.bind(functions=[format_to_openai_functions(t) for t in tools])
+
+# NOTE: line 81 uncommented allows this code to work, not sure why line 82 was added so I left it in
+# NOTE: if you need to switch lines, be sure and run
+#  `docker compose up --build --force-recreate`
+
 
 agent = (
     {
