@@ -21,7 +21,7 @@ Before you begin, ensure you have met the following requirements:
   OPENAI_API_KEY=your-openai-key
   LANGCHAIN_API_KEY=your-langchain-key
   LANGCHAIN_TRACING_V2=true
-  LANGCHAIN_PROJECT=24a5_7_3
+  LANGCHAIN_PROJECT=week_7_3
   ```
 ## Docker (recommended)
 
