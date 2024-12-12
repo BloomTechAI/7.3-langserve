@@ -32,17 +32,17 @@ Before you begin, ensure you have met the following requirements:
    docker compose up agent
    docker compose up chat
    ```
-4. Start Jupyter to run the corresponding `.ipynb` files with a local notebook:
+4. Start Jupyter to run the corresponding `.ipynb` files you may create:
    ```
    docker compose up jupyter
    ```
-5. Run any `.py` file in the root directory in this manner (`.py` files you may create):
+5. Run any `.py` files you may create in the `demo` directory in this manner:
    ```
    docker compose run --rm main python <the_py_file>
    ```
 
 ## Running Different Scripts
-You can use the provided `run.sh` script for easier execution.
+You can use the provided `run.sh` script for easier execution. Make sure you are in the `demo` directory when running the script.
 Make sure to make the script executable with `chmod +x run.sh` in the CLI before using:
 ```bash
 ./run.sh agent #(starts the agent server)
@@ -76,4 +76,4 @@ If you prefer to run the examples locally:
     run the `.ipynb` files in VSCode (it will prompt you to allow the installation of ipykernel: do so) or another IDE that supports notebooks.
     ```
 ## Need Help?
-Reach out to the course instructor or learning assistant
+Reach out to the learning assistants in the course Slack channel.
