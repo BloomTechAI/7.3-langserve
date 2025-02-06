@@ -1,0 +1,11 @@
+services:
+  js-langserve:
+    build:
+      context: .
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    ports:
+      - "8083:8083"
+    volumes:
+      - .:/app
+      - /app/node_modules 

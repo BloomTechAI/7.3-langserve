@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Express Playground</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            '50': '#f7f7f7',
+                            '100': '#1a1a1a',
+                            '200': '#0a0a0a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-dark-200 text-white font-sans p-5">
+    <div class="max-w-4xl mx-auto">
+        <div class="flex items-center mb-5">
+            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEyIDJsOS45IDUuMnYxMC4xbC05LjkgNS4yLTkuOS01LjJWNy4yTDEyIDJ6IiBmaWxsPSIjZmYwMGZmIi8+PC9zdmc+" 
+                 width="32" 
+                 height="32" 
+                 class="mr-3">
+            <h1 class="text-2xl font-semibold">Express Playground</h1>
+        </div>
+
+        <div class="bg-dark-100 rounded-lg p-5 mb-5">
+            <select id="endpoint" 
+                    class="w-full p-3 mb-5 bg-dark-200 text-white border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    onchange="handleEndpointChange()">
+                <option value="/chain/invoke">Basic Chain</option>
+                <option value="/agent/invoke">Basic Agent</option>
+                <option value="/chat/invoke">Chat with Persistence</option>
+            </select>
+            
+            <div id="toolSection" 
+                 class="hidden mb-5 p-3 bg-dark-200 border border-gray-700 rounded-md">
+                <h3 class="text-white font-semibold mb-3">Available Tools</h3>
+                <label class="block mb-2 text-gray-300">
+                    <input type="checkbox" 
+                           class="tool-checkbox mr-2 rounded border-gray-600 text-blue-500 focus:ring-blue-500" 
+                           value="get_eugene_thoughts" 
+                           checked>
+                    get_eugene_thoughts - Returns Eugene's thoughts on a topic
+                </label>
+            </div>
+
+            <h2 class="text-lg font-semibold mb-3">Inputs</h2>
+            <textarea id="input" 
+                      placeholder="Enter your input here..." 
+                      class="w-full h-32 p-3 mb-3 bg-dark-200 text-white border border-gray-700 rounded-md font-mono resize-y focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+            
+            <div class="flex gap-3">
+                <button onclick="shareInput()" 
+                        class="px-5 py-2 border border-white text-white rounded-md hover:bg-gray-700 transition-colors">
+                    Share
+                </button>
+                <button onclick="sendRequest()" 
+                        class="px-5 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                    Start
+                </button>
+            </div>
+        </div>
+
+        <div id="output" 
+             class="bg-dark-100 rounded-lg p-5 min-h-[100px] font-mono whitespace-pre-wrap">
+            // Output will appear here...
+        </div>
+    </div>
+
+    <script>
+        let sessionId = localStorage.getItem('sessionId') || 
+            Array.from(crypto.getRandomValues(new Uint8Array(16)))
+                .map(b => b.toString(16).padStart(2, '0'))
+                .join('');
+        localStorage.setItem('sessionId', sessionId);
+
+        function handleEndpointChange() {
+            const endpoint = document.getElementById('endpoint').value;
+            const toolSection = document.getElementById('toolSection');
+            toolSection.style.display = endpoint === '/agent/invoke' ? 'block' : 'none';
+        }
+
+        async function sendRequest() {
+            const endpoint = document.getElementById('endpoint').value;
+            const input = document.getElementById('input').value;
+            const output = document.getElementById('output');
+
+            let payload = {};
+            if (endpoint === '/chain/invoke') {
+                payload = { question: input };
+            } else if (endpoint === '/agent/invoke') {
+                const selectedTools = Array.from(document.querySelectorAll('.tool-checkbox:checked'))
+                    .map(cb => cb.value);
+                payload = { 
+                    input: input,
+                    tools: selectedTools
+                };
+            } else if (endpoint === '/chat/invoke') {
+                payload = { human_input: input };
+            }
+
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'session-id': sessionId
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                output.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                output.textContent = `Error: ${error.message}`;
+            }
+        }
+
+        function shareInput() {
+            const input = document.getElementById('input').value;
+            const endpoint = document.getElementById('endpoint').value;
+            const toolsParam = endpoint === '/agent/invoke' 
+                ? '&tools=' + Array.from(document.querySelectorAll('.tool-checkbox:checked'))
+                    .map(cb => cb.value).join(',')
+                : '';
+            
+            const params = new URLSearchParams({
+                input: input,
+                endpoint: endpoint
+            });
+            const url = `${window.location.origin}${window.location.pathname}?${params}${toolsParam}`;
+            navigator.clipboard.writeText(url);
+            alert('Link copied to clipboard!');
+        }
+
+        // Load shared input if present
+        window.onload = function() {
+            const params = new URLSearchParams(window.location.search);
+            const input = params.get('input');
+            const endpoint = params.get('endpoint');
+            const tools = params.get('tools');
+            
+            if (input) document.getElementById('input').value = input;
+            if (endpoint) {
+                document.getElementById('endpoint').value = endpoint;
+                handleEndpointChange();
+            }
+            if (tools) {
+                const toolArray = tools.split(',');
+                document.querySelectorAll('.tool-checkbox').forEach(cb => {
+                    cb.checked = toolArray.includes(cb.value);
+                });
+            }
+        };
+
+        // Initialize tool section visibility
+        handleEndpointChange();
+    </script>
+</body>
+</html> 
